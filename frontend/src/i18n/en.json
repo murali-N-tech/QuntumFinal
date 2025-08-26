@@ -6,7 +6,13 @@
     "optimizer": "Optimizer",
     "login": "Login",
     "logout": "Logout",
-    "register": "Register"
+    "register": "Register",
+    "home": "Home"
+  },
+  "hero": {
+    "title": "Unleash Your Financial Potential with Quantum-Powered AI",
+    "subtitle": "Harness the computational power of quantum mechanics to build an optimal portfolio with higher returns and reduced risk.",
+    "ctaButton": "Explore Solutions"
   },
   "home": {
     "title": "Quantum-Powered Portfolio Optimization",

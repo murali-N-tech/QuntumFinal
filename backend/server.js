@@ -26,5 +26,5 @@ app.use('/api/screener', require('./src/routes/screenerRoutes'));
 // Custom Error Handler
 app.use(errorHandler);
 
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 5002;
 app.listen(PORT, () => console.log(`Server started on port ${PORT}`));

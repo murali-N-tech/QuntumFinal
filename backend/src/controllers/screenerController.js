@@ -1,20 +1,26 @@
-const { getMultipleStockQuotes } = require('../services/stockService.js');
-const { getTopCryptos } = require('../services/cryptoService.js');
-const { getForexPairs } = require('../services/forexService.js');
-const { getMarketNews } = require('../services/tradingService.js');
+const {
+  getMultipleStockQuotes,
+  getTopStocksWithQuotes,
+} = require("../services/stockService.js");
+const { getTopCryptos } = require("../services/cryptoService.js");
+const { getForexPairs } = require("../services/forexService.js");
+const { getMarketNews } = require("../services/tradingService.js");
 
 // === Stock Controller ===
 const fetchMultipleStockQuotes = async (req, res, next) => {
-    try {
-        const symbols = req.query.symbols;
-        if (!symbols) {
-            return res.status(400).json({ message: 'Symbols query parameter is required.' });
-        }
-        const quotes = await getMultipleStockQuotes(symbols);
-        res.json(quotes);
-    } catch (error) {
-        next(error);
+  try {
+    const symbols = req.query.symbols;
+    if (symbols) {
+      const quotes = await getMultipleStockQuotes(symbols.split(","));
+      return res.json(quotes);
+    } else {
+      // ✅ Correct function
+      const topStocks = await getTopStocksWithQuotes();
+      return res.json(topStocks);
     }
+  } catch (error) {
+    next(error);
+  }
 };
 
 // === Crypto Controller ===

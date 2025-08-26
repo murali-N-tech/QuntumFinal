@@ -3,6 +3,7 @@
 @tailwind utilities;
 
 body {
-  background-color: #f0f2f5;
-  color: #1a202c;
+  /* Use your new custom color for the body background */
+  background-color: #0D1117;
+  color: #f0f2f5; /* Change text color for better contrast on a dark background */
 }

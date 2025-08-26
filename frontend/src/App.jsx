@@ -9,10 +9,10 @@ import Dashboard from './pages/Dashboard';
 import StocksPage from './pages/StocksPage';
 import CryptoPage from './pages/CryptoPage';
 import ForexPage from './pages/ForexPage';
-import TradingPage from './pages/TradingPage';
-import PortfolioPage from './pages/PortfolioPage';
-import NotFound from './pages/NotFound';
-import AssetDetailPage from './pages/AssetDetailPage';
+import NewsPage from "./pages/NewsPage"; // Renamed from TradingPage
+import PortfolioPage from "./pages/PortfolioPage";
+import NotFound from "./pages/NotFound";
+import AssetDetailPage from "./pages/AssetDetailPage";
 
 function App() {
   return (
@@ -27,7 +27,8 @@ function App() {
           <Route path="/stocks" element={<StocksPage />} />
           <Route path="/crypto" element={<CryptoPage />} />
           <Route path="/forex" element={<ForexPage />} />
-          <Route path="/trading" element={<TradingPage />} />
+          {/* The comment has been moved outside the Route component */}
+          <Route path="/trading" element={<NewsPage />} />
           <Route path="/portfolio" element={<PortfolioPage />} />
           <Route path="*" element={<NotFound />} />
           <Route path="/asset/:symbol" element={<AssetDetailPage />} />

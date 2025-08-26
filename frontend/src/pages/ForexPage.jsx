@@ -21,29 +21,61 @@ const ForexPage = () => {
     fetchPairs();
   }, []);
 
-  if (isLoading) return <p className="text-center">Loading major Forex pairs...</p>;
-  if (error) return <p className="text-center text-red-500">{error}</p>;
+  if (isLoading)
+    return (
+      <p className="text-center p-8 text-white">Loading major Forex pairs...</p>
+    );
+  if (error) return <p className="text-center p-8 text-red-500">{error}</p>;
 
   return (
-    <div>
-      <h1 className="text-3xl font-bold mb-4">Forex Market 🌍</h1>
-      <p className="text-gray-600 mb-6">Live data for major currency pairs.</p>
+    <div className="bg-quantum-bg text-white min-h-screen p-8">
+      <h1 className="text-4xl md:text-5xl font-bold mb-4 text-white text-center">
+        Forex Market 🌍
+      </h1>
+      <p className="text-gray-400 mb-8 text-center">
+        Live data for major currency pairs.
+      </p>
 
-      <div className="bg-white rounded-lg shadow overflow-hidden">
+      <div className="bg-white rounded-lg shadow-xl border-2 border-black overflow-hidden">
         <table className="w-full text-left">
-          <thead className="bg-gray-50 border-b">
+          <thead className="bg-gray-200 border-b-2 border-black">
             <tr>
-              <th className="p-4">Symbol</th>
-              <th className="p-4">Currency Group</th>
-              <th className="p-4">Base / Quote</th>
+              <th className="p-4 text-black font-bold">Symbol</th>
+              <th className="p-4 text-black font-bold">Name</th>
+              <th className="p-4 hidden sm:table-cell text-black font-bold">
+                Active
+              </th>
+              <th className="p-4 hidden md:table-cell text-black font-bold">
+                Locale
+              </th>
+              <th className="p-4 hidden md:table-cell text-black font-bold">
+                Market
+              </th>
+              <th className="p-4 text-black font-bold">Base / Quote</th>
             </tr>
           </thead>
           <tbody>
             {pairs.map((pair) => (
-              <tr key={pair.symbol} className="border-b hover:bg-gray-50">
-                <td className="p-4 font-mono font-semibold text-blue-600">{pair.symbol}</td>
-                <td className="p-4">{pair.currency_group}</td>
-                <td className="p-4">{pair.currency_base} / {pair.currency_quote}</td>
+              <tr
+                key={pair.symbol}
+                className="border-b border-gray-200 hover:bg-gray-100 transition-colors duration-200"
+              >
+                <td className="p-4 font-mono font-semibold text-blue-600">
+                  {pair.symbol}
+                </td>
+                <td className="p-4 text-gray-800">{pair.name}</td>
+                <td className="p-4 hidden sm:table-cell text-gray-800">
+                  {pair.active ? "Yes" : "No"}
+                </td>
+                <td className="p-4 hidden md:table-cell text-gray-800">
+                  {pair.locale}
+                </td>
+                <td className="p-4 hidden md:table-cell text-gray-800">
+                  {pair.market}
+                </td>
+                <td className="p-4 text-gray-800">
+                  {pair.currency_base} / {pair.currency_quote}
+                </td>
               </tr>
             ))}
           </tbody>
