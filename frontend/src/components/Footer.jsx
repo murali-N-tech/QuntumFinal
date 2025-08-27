@@ -1,65 +1,35 @@
 import React from 'react';
 import { Link } from "react-router-dom";
 
-// The full SVG icon components are not necessary if the theme switcher is removed.
-const SunIcon = () => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    className="h-5 w-5"
-    fill="none"
-    viewBox="0 0 24 24"
-    stroke="currentColor"
-    strokeWidth={2}
-  >
-    <path
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"
-    />
-  </svg>
-);
-const MoonIcon = () => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    className="h-5 w-5"
-    fill="none"
-    viewBox="0 0 24 24"
-    stroke="currentColor"
-    strokeWidth={2}
-  >
-    <path
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"
-    />
-  </svg>
-);
-const AutoIcon = () => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    className="h-5 w-5"
-    fill="none"
-    viewBox="0 0 24 24"
-    stroke="currentColor"
-    strokeWidth={2}
-  >
-    <path
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
-    />
-  </svg>
-);
-
-
 const Footer = () => {
-  // Reverted to the original functional component
   return (
-    <footer className="bg-white mt-auto">
-      <div className="container mx-auto px-4 py-6 text-center text-gray-600">
-        <p>
-          &copy; {new Date().getFullYear()} QuantumFolio. All Rights Reserved.
-        </p>
+    <footer className="bg-quantum-primary border-t border-quantum-border mt-auto">
+      <div className="container mx-auto px-6 py-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center md:text-left">
+          <div>
+            <h3 className="text-lg font-bold text-quantum-accent mb-4">QuantumFolio</h3>
+            <p className="text-quantum-text-muted">
+              Leveraging quantum-inspired algorithms to provide cutting-edge portfolio optimization and financial insights.
+            </p>
+          </div>
+          <div>
+            <h3 className="text-lg font-bold text-quantum-accent mb-4">Quick Links</h3>
+            <ul className="space-y-2">
+              <li><Link to="/about" className="text-quantum-text-muted hover:text-quantum-accent transition-colors">About Us</Link></li>
+              <li><Link to="/support" className="text-quantum-text-muted hover:text-quantum-accent transition-colors">Support</Link></li>
+              <li><Link to="/terms" className="text-quantum-text-muted hover:text-quantum-accent transition-colors">Terms of Service</Link></li>
+            </ul>
+          </div>
+          <div>
+            <h3 className="text-lg font-bold text-quantum-accent mb-4">Disclaimer</h3>
+            <p className="text-sm text-quantum-text-muted">
+              This tool is for informational purposes only and should not be considered financial advice. All investments carry risk.
+            </p>
+          </div>
+        </div>
+        <div className="text-center text-quantum-text-muted mt-8 pt-6 border-t border-quantum-border">
+          <p>&copy; {new Date().getFullYear()} QuantumFolio by StackZy. All Rights Reserved.</p>
+        </div>
       </div>
     </footer>
   );

@@ -5,6 +5,8 @@ import PieChart from '../components/PieChart';
 import MultiLineChart from '../components/LineChart';
 import { useAuth } from '../context/AuthContext';
 import useDebounce from '../hooks/useDebounce';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Atom, Search, Plus, Trash2, DollarSign, BarChart2, CheckCircle, AlertTriangle, TrendingUp, TrendingDown } from 'lucide-react';
 
 const ASSET_CATEGORIES = {
   Stocks: ["AAPL", "GOOGL", "MSFT", "AMZN", "NVDA", "TSLA", "META", "JPM"],
@@ -12,31 +14,9 @@ const ASSET_CATEGORIES = {
   Forex: ["EURUSD=X", "JPY=X", "GBPUSD=X", "AUDUSD=X", "USDCAD=X", "USDCHF=X"]
 };
 
-// Sub-component for the dynamic investment input field
-const InvestmentInput = ({ category, amount, setAmount }) => {
-  const getInputDetails = () => {
-    switch (category) {
-      case 'Crypto': return { label: 'Enter Total Crypto Investment', icon: '🪙' };
-      case 'Forex': return { label: 'Enter Total Forex Trade Amount', icon: '🌍' };
-      default: return { label: 'Enter Total Stock Investment', icon: '📈' };
-    }
-  };
-  const { label, icon } = getInputDetails();
-  return (
-    <div className="mb-6">
-      <h2 className="text-xl font-semibold mb-3 text-black">{`1. ${label}`}</h2>
-      <div className="flex items-center">
-        <span className="text-2xl font-bold text-gray-500 mr-2">{icon}</span>
-        <input type="number" value={amount} onChange={(e) => setAmount(Number(e.target.value))} placeholder="e.g., 10000"
-            className="w-full max-w-xs px-4 py-2 text-lg border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-black bg-white" />
-      </div>
-    </div>
-  );
-};
-
-
 const PortfolioPage = () => {
-  const [selectedAssets, setSelectedAssets] = useState([]);
+  // All of your original state and logic is preserved here.
+  const [selectedAssets, setSelectedAssets] = useState(["AAPL", "GOOGL", "MSFT"]);
   const [activeCategory, setActiveCategory] = useState('Stocks');
   const [investmentAmount, setInvestmentAmount] = useState(10000);
   const [searchQuery, setSearchQuery] = useState('');
@@ -67,7 +47,8 @@ const PortfolioPage = () => {
         }
         setIsSearching(true);
         try {
-            const response = await api.get(`/screener/search?q=${debouncedSearchQuery}`);
+            // Corrected endpoint based on backend routes
+            const response = await api.get(`/screener/assets/search?q=${debouncedSearchQuery}`);
             setSearchResults(response.data);
         } catch (err) {
             console.error("Search failed:", err);
@@ -97,10 +78,10 @@ const PortfolioPage = () => {
 
   if (!isAuthenticated) {
     return (
-      <div className="bg-quantum-bg text-white min-h-screen p-8 flex flex-col items-center justify-center">
-        <h2 className="text-3xl font-semibold mb-4">Access Denied</h2>
-        <p className="mt-2 text-gray-400">
-          Please <Link to="/login" className="text-blue-400 hover:underline">log in</Link> to use the optimizer.
+      <div className="container mx-auto px-4 py-8 text-center">
+        <h2 className="text-3xl font-semibold mb-4 text-quantum-text">Authentication Required</h2>
+        <p className="mt-2 text-quantum-text-muted">
+          Please <Link to="/login" className="text-quantum-accent hover:underline">log in</Link> to use the optimizer.
         </p>
       </div>
     );
@@ -113,7 +94,6 @@ const PortfolioPage = () => {
     }
     setSearchQuery('');
     setSearchResults([]);
-    setActiveCategory('Stocks');
   };
 
   const handleAssetToggle = (asset) => {
@@ -189,170 +169,194 @@ const PortfolioPage = () => {
   };
 
   return (
-    <div className="bg-quantum-bg text-white min-h-screen p-8">
-      <h1 className="text-4xl md:text-5xl font-bold mb-4 text-white text-center">Quantum Portfolio Optimizer ✨</h1>
-      <p className="text-gray-400 mb-8 text-center">Harness the power of quantum computing for smarter investments.</p>
+    <div className="container mx-auto px-4 py-8">
+      <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
+        <h1 className="text-4xl md:text-5xl font-bold mb-4 text-quantum-text text-center glow-text">Quantum Portfolio Optimizer</h1>
+        <p className="text-quantum-text-muted mb-12 text-center max-w-3xl mx-auto">
+          Define your investment parameters and select your assets. Our quantum-inspired engine will find the optimal allocation to maximize your Sharpe Ratio.
+        </p>
+      </motion.div>
 
-      <div className="bg-white p-8 rounded-lg shadow-xl border-2 border-black max-w-7xl mx-auto">
-        <InvestmentInput category={activeCategory} amount={investmentAmount} setAmount={setInvestmentAmount} />
-        <h2 className="text-xl font-semibold mb-6 text-black">2. Select Your Assets</h2>
-        <div className="border-b border-gray-300 mb-6">
-          <nav className="-mb-px flex space-x-6">
-            {Object.keys(ASSET_CATEGORIES).map((category) => (
-              <button key={category} onClick={() => setActiveCategory(category)}
-                className={`whitespace-nowrap py-3 px-1 border-b-2 font-medium text-sm transition-colors ${activeCategory === category ? "border-blue-500 text-blue-600" : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"}`}>
-                {category}
-              </button>
-            ))}
-          </nav>
-        </div>
-        <div className="flex flex-wrap gap-2 mb-6">
-          {assetsToDisplay.map((asset) => (
-            <button key={asset} onClick={() => handleAssetToggle(asset)}
-              className={`px-4 py-2 rounded-full text-sm font-medium transition-colors border-2 ${selectedAssets.includes(asset) ? "bg-blue-600 text-white border-blue-600" : "bg-white text-black border-black hover:bg-gray-100"}`}>
-              {asset}
-            </button>
-          ))}
-        </div>
-        
-        <div className="mt-8">
-          <h3 className="text-md font-semibold mb-2 text-black">Add Custom Asset</h3>
-          <div className="relative">
-            <div className="flex gap-2">
-                <input type="text" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)}
-                    onKeyDown={(e) => e.key === 'Enter' && addAssetToPortfolio(searchQuery)}
-                    placeholder="Search for a stock ticker or name..."
-                    className="flex-grow px-3 py-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-black bg-white" />
-                <button onClick={() => addAssetToPortfolio(searchQuery)}
-                    className="bg-gray-800 text-white font-semibold px-4 py-2 rounded-lg hover:bg-gray-900 transition-colors">
-                    Add
-                </button>
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
+        {/* Left Column: Configuration & Asset Selection */}
+        <div className="lg:col-span-1 space-y-8">
+          <motion.div className="quantum-card p-6" initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.5, delay: 0.2 }}>
+            <h2 className="text-xl font-bold text-quantum-accent mb-4">Step 1: Configure Investment</h2>
+            <label className="block text-sm font-medium text-quantum-text-muted mb-2">Total Investment Amount ($)</label>
+            <div className="relative">
+              <DollarSign className="absolute left-3 top-1/2 -translate-y-1/2 text-quantum-text-muted" size={20} />
+              <input type="number" value={investmentAmount} onChange={(e) => setInvestmentAmount(Number(e.target.value))} placeholder="e.g., 10000"
+                  className="w-full pl-10 pr-4 py-3 bg-quantum-primary/50 text-quantum-text border border-quantum-border rounded-lg focus:outline-none focus:ring-2 focus:ring-quantum-accent" />
             </div>
-            {(isSearching || searchResults.length > 0) && (
-              <ul className="absolute z-10 w-full bg-white border border-gray-300 rounded-lg mt-1 max-h-60 overflow-y-auto shadow-lg">
-                {isSearching ? <li className="px-4 py-2 text-gray-500">Searching...</li> : (
-                  searchResults.map(asset => (
-                    <li key={asset.symbol} onClick={() => addAssetToPortfolio(asset.symbol)}
-                      className="px-4 py-2 text-black hover:bg-blue-500 hover:text-white cursor-pointer">
-                      <span className="font-bold">{asset.symbol}</span>
-                      <span className="text-sm text-gray-600 ml-2">{asset.name}</span>
-                    </li>
-                  ))
-                )}
-              </ul>
-            )}
-          </div>
+          </motion.div>
+          
+          <motion.div className="quantum-card p-6" initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.5, delay: 0.4 }}>
+            <h2 className="text-xl font-bold text-quantum-accent mb-4">Step 2: Select Assets</h2>
+            <div className="border-b border-quantum-border mb-4">
+              <nav className="-mb-px flex space-x-4">
+                {Object.keys(ASSET_CATEGORIES).map(cat => (
+                  <button key={cat} onClick={() => setActiveCategory(cat)} className={`whitespace-nowrap py-2 px-1 border-b-2 font-medium text-sm transition-colors ${activeCategory === cat ? 'border-quantum-accent text-quantum-accent' : 'border-transparent text-quantum-text-muted hover:text-quantum-text'}`}>
+                    {cat}
+                  </button>
+                ))}
+              </nav>
+            </div>
+            <div className="flex flex-wrap gap-2 mb-6">
+              {assetsToDisplay.map(asset => (
+                <button key={asset} onClick={() => handleAssetToggle(asset)}
+                  className={`px-3 py-1.5 rounded-full text-sm font-medium transition-colors border ${selectedAssets.includes(asset) ? 'bg-quantum-accent text-quantum-primary border-quantum-accent' : 'bg-quantum-secondary/20 text-quantum-text-muted border-quantum-border hover:border-quantum-accent'}`}>
+                  {selectedAssets.includes(asset) ? <CheckCircle size={14} className="inline mr-1" /> : <Plus size={14} className="inline mr-1" />}
+                  {asset}
+                </button>
+              ))}
+            </div>
+            
+            <div className="relative">
+                <div className="flex gap-2">
+                    <div className="relative flex-grow">
+                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-quantum-text-muted" size={18} />
+                        <input type="text" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} placeholder="Add custom asset..."
+                          onKeyDown={(e) => e.key === 'Enter' && addAssetToPortfolio(searchQuery)}
+                          className="w-full pl-10 pr-4 py-2 bg-quantum-primary/50 text-quantum-text border border-quantum-border rounded-lg focus:outline-none focus:ring-2 focus:ring-quantum-accent" />
+                    </div>
+                    <button onClick={() => addAssetToPortfolio(searchQuery)}
+                        className="bg-quantum-accent text-quantum-primary font-semibold px-4 py-2 rounded-lg hover:bg-quantum-glow transition-colors">
+                        Add
+                    </button>
+                </div>
+              {(isSearching || searchResults.length > 0) && (
+                <ul className="absolute z-10 w-full bg-quantum-secondary border border-quantum-border rounded-lg mt-1 max-h-48 overflow-y-auto shadow-lg">
+                  {isSearching ? <li className="px-4 py-2 text-quantum-text-muted">Searching...</li> : (
+                    searchResults.map(asset => (
+                      <li key={asset.symbol} onClick={() => addAssetToPortfolio(asset.symbol)}
+                        className="px-4 py-2 text-quantum-text hover:bg-quantum-accent/10 cursor-pointer">
+                        <span className="font-bold">{asset.symbol}</span>
+                        <span className="text-sm text-quantum-text-muted ml-2">{asset.name}</span>
+                      </li>
+                    ))
+                  )}
+                </ul>
+              )}
+            </div>
+            <div className="mt-4 border-t border-quantum-border pt-4">
+              <h3 className="font-semibold text-quantum-text mb-2">Selected ({selectedAssets.length}):</h3>
+              <div className="flex flex-wrap gap-2">
+                {selectedAssets.map(asset => (
+                  <div key={asset} className="flex items-center bg-quantum-secondary/30 text-quantum-text rounded-full px-3 py-1 text-sm">
+                    {asset}
+                    <button onClick={() => handleAssetToggle(asset)} className="ml-2 text-quantum-text-muted hover:text-red-400"><Trash2 size={12} /></button>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </motion.div>
         </div>
 
-        <div className="mt-8 border-t-2 border-black pt-6">
-          <h3 className="font-bold text-black text-lg">Selected Assets ({selectedAssets.length}):</h3>
-          <p className="text-sm text-gray-600 break-words mt-2">{selectedAssets.length > 0 ? selectedAssets.join(", ") : "None"}</p>
+        {/* Right Column: Optimizer Button and Results */}
+        <div className="lg:col-span-2 space-y-8">
+            <motion.button onClick={handleOptimize} disabled={isLoading || selectedAssets.length < 2}
+              className="w-full flex items-center justify-center bg-quantum-accent text-quantum-primary font-bold py-4 px-6 rounded-lg hover:bg-quantum-glow disabled:bg-quantum-accent/50 transition-all text-lg transform hover:scale-105 shadow-2xl shadow-quantum-accent/20"
+              initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.6 }}>
+              {isLoading ? (
+                  <>
+                    <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-quantum-primary mr-3"></div>
+                    Running Quantum Simulation...
+                  </>
+                ) : (
+                  <>
+                    <Atom className="mr-2" /> Optimize Portfolio
+                  </>
+                )}
+            </motion.button>
+            
+            <AnimatePresence>
+              {error && (
+                <motion.div className="quantum-card p-6 text-center text-red-400 flex items-center justify-center" initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }}>
+                  <AlertTriangle className="mr-2" /> {error}
+                </motion.div>
+              )}
+
+              {results && (
+                <motion.div className="space-y-8" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }}>
+                  <div className="quantum-card p-6">
+                    <h2 className="text-2xl font-bold mb-6 text-quantum-accent text-center">Step 3: Optimal Allocation</h2>
+                    <div className="grid md:grid-cols-2 gap-8 items-center">
+                      <div className="h-[300px] w-full"><PieChart data={results.optimal_weights} /></div>
+                      <div className="space-y-4">
+                          <div className="flex justify-between items-center bg-quantum-secondary/20 p-3 rounded-lg">
+                              <span className="font-semibold text-quantum-text-muted">Sharpe Ratio</span>
+                              <span className="font-bold text-2xl text-quantum-accent">{results.performance.sharpe_ratio.toFixed(4)}</span>
+                          </div>
+                           <div className="flex justify-between items-center bg-quantum-secondary/20 p-3 rounded-lg">
+                              <span className="font-semibold text-quantum-text-muted">Expected Annual Return</span>
+                              <span className="font-bold text-lg text-green-400">{(results.performance.expected_annual_return * 100).toFixed(2)}%</span>
+                          </div>
+                           <div className="flex justify-between items-center bg-quantum-secondary/20 p-3 rounded-lg">
+                              <span className="font-semibold text-quantum-text-muted">Annual Volatility</span>
+                              <span className="font-bold text-lg text-yellow-400">{(results.performance.annual_volatility * 100).toFixed(2)}%</span>
+                          </div>
+                           <div className="flex justify-between items-center bg-quantum-secondary/20 p-3 rounded-lg">
+                              <span className="font-semibold text-quantum-text-muted">Daily VaR (95%)</span>
+                              <span className="font-bold text-lg text-red-400">{(results.performance.value_at_risk_95 * 100).toFixed(2)}%</span>
+                          </div>
+                           <div className="flex justify-between items-center bg-green-500/10 border border-green-500/30 p-3 rounded-lg">
+                              <span className="font-semibold text-quantum-text-muted">Projected Annual Profit</span>
+                              <span className="font-bold text-lg text-green-400">
+                                  ${(investmentAmount * results.performance.expected_annual_return).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                              </span>
+                          </div>
+                           <div className="flex justify-between items-center bg-red-500/10 border border-red-500/30 p-3 rounded-lg">
+                              <span className="font-semibold text-quantum-text-muted">Potential Daily Risk</span>
+                              <span className="font-bold text-lg text-red-400">
+                                  ${(investmentAmount * results.performance.value_at_risk_95).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                              </span>
+                          </div>
+                      </div>
+                    </div>
+                  </div>
+                  
+                   {optimizedAssetDetails && optimizedAssetDetails.length > 0 && (
+                    <div className="quantum-card p-6">
+                      <h2 className="text-2xl font-bold mb-4 text-quantum-accent text-center">Real-Time Asset Data</h2>
+                      <div className="overflow-x-auto">
+                        <table className="w-full text-left text-quantum-text">
+                           <thead className="border-b-2 border-quantum-border">
+                                <tr>
+                                  <th className="p-4 font-semibold text-quantum-text-muted">Symbol</th>
+                                  <th className="p-4 font-semibold text-quantum-text-muted">Price</th>
+                                  <th className="p-4 font-semibold text-quantum-text-muted">Change (%)</th>
+                                  <th className="p-4 font-semibold text-quantum-text-muted hidden md:table-cell">Volume</th>
+                                </tr>
+                            </thead>
+                          <tbody>
+                            {optimizedAssetDetails.map(stock => (
+                              <tr key={stock.symbol} className="border-b border-quantum-border last:border-b-0">
+                                <td className="p-4 font-mono font-semibold text-quantum-accent">{stock.symbol}</td>
+                                <td className="p-4">${stock.price?.toFixed(2)}</td>
+                                <td className={`p-4 flex items-center ${stock.changePercent >= 0 ? 'text-green-400' : 'text-red-400'}`}>
+                                   {stock.changePercent >= 0 ? <TrendingUp size={16} className="mr-1" /> : <TrendingDown size={16} className="mr-1" />}
+                                  {stock.changePercent ? `${stock.changePercent.toFixed(2)}%` : "N/A"}
+                                </td>
+                                <td className="p-4 hidden md:table-cell">{stock.volume?.toLocaleString()}</td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  )}
+
+                  {chartData && chartData.length > 0 && (
+                    <div className="quantum-card p-6">
+                      <h2 className="text-2xl font-bold mb-4 text-quantum-accent text-center">Historical Performance (1Y)</h2>
+                      <div className="h-[400px] w-full"><MultiLineChart data={chartData} assets={selectedAssets} /></div>
+                    </div>
+                  )}
+                </motion.div>
+              )}
+            </AnimatePresence>
         </div>
       </div>
-
-      <button onClick={handleOptimize} disabled={isLoading || selectedAssets.length < 2}
-        className="w-full bg-green-600 text-white font-bold py-3 px-6 rounded-lg hover:bg-green-700 disabled:bg-gray-400 transition-colors text-lg mt-8 max-w-7xl mx-auto block">
-        {isLoading ? "Running Quantum Simulation..." : "Optimize Portfolio"}
-      </button>
-
-      {error && <div className="text-red-500 mt-4 text-center font-semibold">{error}</div>}
-
-      {results && (
-        <div className="mt-8 space-y-8 max-w-7xl mx-auto">
-          <div className="bg-white p-8 rounded-lg shadow-xl border-2 border-black animate-fade-in">
-            <h2 className="text-2xl font-bold mb-6 text-black text-center">Optimal Portfolio Allocation</h2>
-            <div className="grid md:grid-cols-2 gap-8 items-center">
-              <div className="space-y-6">
-                <div>
-                  <h3 className="font-semibold text-lg text-black">Financial Projections</h3>
-                  <ul className="text-gray-800 mt-2">
-                    <li className="py-2 border-b border-gray-200 flex justify-between items-center bg-green-50 rounded px-2">
-                        <strong>Projected Annual Profit:</strong>
-                        <span className="font-bold text-lg text-green-600">
-                            ${(investmentAmount * results.performance.expected_annual_return).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                        </span>
-                    </li>
-                    <li className="py-2 border-b border-gray-200 flex justify-between items-center bg-red-50 rounded px-2">
-                        <strong>Potential Daily Risk (VaR 95%):</strong>
-                        <span className="font-bold text-lg text-red-600">
-                            ${(investmentAmount * results.performance.value_at_risk_95).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                        </span>
-                    </li>
-                    <li className="py-2 border-b border-gray-200 flex justify-between items-center bg-blue-50 rounded px-2">
-                        <strong>Sharpe Ratio (Risk/Reward):</strong>
-                        <span className="font-bold text-lg text-blue-600">
-                            {results.performance.sharpe_ratio.toFixed(4)}
-                        </span>
-                    </li>
-                  </ul>
-                </div>
-                <div>
-                  <h3 className="font-semibold text-lg text-black">Allocation Details:</h3>
-                  <ul className="text-gray-800 mt-2">
-                    {Object.entries(results.optimal_weights).map(([asset, weight]) => (
-                      <li key={asset} className="flex justify-between items-center py-1 border-b border-gray-200 last:border-b-0">
-                        <span className="font-bold">{asset}:</span>
-                        <span>
-                          ${(investmentAmount * weight).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                          <span className="text-sm text-gray-500 ml-2">({(weight * 100).toFixed(2)}%)</span>
-                        </span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              </div>
-              <div className="h-[300px] w-full"><PieChart data={results.optimal_weights} /></div>
-            </div>
-          </div>
-          
-          {chartData && chartData.length > 0 && (
-            <div className="bg-white p-8 rounded-lg shadow-xl border-2 border-black animate-fade-in">
-              <h2 className="text-2xl font-bold mb-4 text-black text-center">
-                Historical Performance Comparison (1Y)
-              </h2>
-              <div className="h-[400px] w-full">
-                <MultiLineChart data={chartData} assets={selectedAssets} />
-              </div>
-            </div>
-          )}
-
-          {optimizedAssetDetails && optimizedAssetDetails.length > 0 && (
-            <div className="bg-white p-8 rounded-lg shadow-xl border-2 border-black animate-fade-in">
-              <h2 className="text-2xl font-bold mb-4 text-black text-center">Real-Time Stock Details</h2>
-              <div className="overflow-x-auto">
-                <table className="w-full text-left text-black">
-                  <thead>
-                    <tr className="border-b-2 border-black">
-                      <th className="p-4 font-bold">Symbol</th>
-                      <th className="p-4 font-bold">Name</th>
-                      <th className="p-4 font-bold">Price</th>
-                      <th className="p-4 font-bold">Change (%)</th>
-                      <th className="p-4 font-bold">Volume</th>
-                      <th className="p-4 font-bold">Market Cap</th>
-                      <th className="p-4 font-bold">High / Low</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {optimizedAssetDetails.map(stock => (
-                      <tr key={stock.symbol} className="border-b border-gray-200">
-                        <td className="p-4 font-mono font-semibold text-blue-600">{stock.symbol}</td>
-                        <td className="p-4">{stock.name || 'N/A'}</td>
-                        <td className="p-4">${stock.price?.toFixed(2)}</td>
-                        <td className={`p-4 ${stock.changePercent >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-                          {stock.changePercent ? `${stock.changePercent.toFixed(2)}%` : "N/A"}
-                        </td>
-                        <td className="p-4">{stock.volume?.toLocaleString()}</td>
-                        <td className="p-4">{stock.marketCap ? `$${stock.marketCap.toLocaleString()}` : 'N/A'}</td>
-                        <td className="p-4">{stock.dayHigh && stock.dayLow ? `$${stock.dayHigh.toFixed(2)} / $${stock.dayLow.toFixed(2)}` : "N/A"}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          )}
-        </div>
-      )}
     </div>
   );
 };

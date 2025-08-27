@@ -1,6 +1,6 @@
 const axios = require("axios");
 
-const API_KEY = "jUb00jMjeMfl2t5VVaDN8tfflhiYvFlC"||"u5QX5qS4bnO2kEO2i7uOhYfxGu4v9Qbu"; // Replace with your API key
+const API_KEY ="M6LLgNCI8QmzY9DaGJDQtL4NW4epSjAk"; // Replace with your API key
 const BASE_URL = "https://financialmodelingprep.com/api/v3";
 
 // Helper: chunk array into smaller batches

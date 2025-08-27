@@ -1,11 +1,48 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-body {
-  /* Use your new custom color for the body background */
-  background-color: #0D1117;
-  color: #f0f2f5; /* Change text color for better contrast on a dark background */
+@layer base {
+  body {
+    @apply bg-quantum-primary text-quantum-text font-sans antialiased;
+  }
+
+  /* Custom scrollbar for a more modern look */
+  ::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: theme('colors.quantum-primary');
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: theme('colors.quantum-border');
+    border-radius: 10px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: theme('colors.quantum-secondary');
+  }
+}
+
+@layer components {
+  /* A utility class for a glowing effect on text */
+  .glow-text {
+    text-shadow: 0 0 8px theme('colors.quantum-glow'), 0 0 16px theme('colors.quantum-glow');
+  }
+
+  /* A card component with a futuristic feel */
+  .quantum-card {
+    @apply bg-white/5 backdrop-blur-lg border border-quantum-border rounded-xl shadow-2xl transition-all duration-300;
+  }
+
+  .quantum-card:hover {
+    @apply border-quantum-accent/50 transform -translate-y-1;
+  }
 }
 @layer utilities {
   @keyframes flicker {
