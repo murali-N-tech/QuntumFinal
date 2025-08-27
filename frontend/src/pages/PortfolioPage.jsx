@@ -6,7 +6,7 @@ import MultiLineChart from '../components/LineChart';
 import { useAuth } from '../context/AuthContext';
 import useDebounce from '../hooks/useDebounce';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Atom, Search, Plus, Trash2, DollarSign, BarChart2, CheckCircle, AlertTriangle, TrendingUp, TrendingDown } from 'lucide-react';
+import { Atom, Search, Plus, Trash2, DollarSign, BarChart2, CheckCircle, AlertTriangle, TrendingUp, TrendingDown, Scale } from 'lucide-react';
 
 const ASSET_CATEGORIES = {
   Stocks: ["AAPL", "GOOGL", "MSFT", "AMZN", "NVDA", "TSLA", "META", "JPM"],
@@ -14,9 +14,39 @@ const ASSET_CATEGORIES = {
   Forex: ["EURUSD=X", "JPY=X", "GBPUSD=X", "AUDUSD=X", "USDCAD=X", "USDCHF=X"]
 };
 
+const PerformanceCard = ({ title, results, investmentAmount, icon }) => (
+    <div className="quantum-card p-6 h-full flex flex-col">
+        <div className="flex items-center justify-center mb-4">
+            {icon}
+            <h3 className="text-2xl font-bold text-quantum-text ml-2">{title}</h3>
+        </div>
+        <div className="h-[300px] w-full"><PieChart data={results.optimal_weights} /></div>
+        <div className="space-y-4 mt-6">
+            <div className="flex justify-between items-center bg-quantum-secondary/20 p-3 rounded-lg">
+                <span className="font-semibold text-quantum-text-muted">Sharpe Ratio</span>
+                <span className="font-bold text-2xl text-quantum-accent">{results.performance.sharpe_ratio.toFixed(4)}</span>
+            </div>
+            <div className="flex justify-between items-center bg-quantum-secondary/20 p-3 rounded-lg">
+                <span className="font-semibold text-quantum-text-muted">Expected Annual Return</span>
+                <span className="font-bold text-lg text-green-400">{(results.performance.expected_annual_return * 100).toFixed(2)}%</span>
+            </div>
+            <div className="flex justify-between items-center bg-quantum-secondary/20 p-3 rounded-lg">
+                <span className="font-semibold text-quantum-text-muted">Annual Volatility</span>
+                <span className="font-bold text-lg text-yellow-400">{(results.performance.annual_volatility * 100).toFixed(2)}%</span>
+            </div>
+            <div className="flex justify-between items-center bg-red-500/10 border border-red-500/30 p-3 rounded-lg">
+                <span className="font-semibold text-quantum-text-muted">Potential Daily Risk (VaR)</span>
+                <span className="font-bold text-lg text-red-400">
+                    ${(investmentAmount * results.performance.value_at_risk_95).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                </span>
+            </div>
+        </div>
+    </div>
+);
+
+
 const PortfolioPage = () => {
-  // All of your original state and logic is preserved here.
-  const [selectedAssets, setSelectedAssets] = useState(["AAPL", "GOOGL", "MSFT"]);
+  const [selectedAssets, setSelectedAssets] = useState(["AAPL", "GOOGL", "MSFT", "NVDA"]);
   const [activeCategory, setActiveCategory] = useState('Stocks');
   const [investmentAmount, setInvestmentAmount] = useState(10000);
   const [searchQuery, setSearchQuery] = useState('');
@@ -47,7 +77,6 @@ const PortfolioPage = () => {
         }
         setIsSearching(true);
         try {
-            // Corrected endpoint based on backend routes
             const response = await api.get(`/screener/assets/search?q=${debouncedSearchQuery}`);
             setSearchResults(response.data);
         } catch (err) {
@@ -61,8 +90,11 @@ const PortfolioPage = () => {
 
   useEffect(() => {
     const fetchOptimizedDetails = async () => {
-      if (results && results.optimal_weights) {
-        const symbols = Object.keys(results.optimal_weights).join(',');
+      if (results && results.quantum && results.quantum.optimal_weights) {
+        const quantumSymbols = Object.keys(results.quantum.optimal_weights);
+        const classicalSymbols = Object.keys(results.classical.optimal_weights);
+        const symbols = [...new Set([...quantumSymbols, ...classicalSymbols])].join(',');
+
         if (!symbols) return;
         try {
           const response = await api.get(`/screener/stocks/quotes?symbols=${symbols}`);
@@ -173,7 +205,7 @@ const PortfolioPage = () => {
       <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
         <h1 className="text-4xl md:text-5xl font-bold mb-4 text-quantum-text text-center glow-text">Quantum Portfolio Optimizer</h1>
         <p className="text-quantum-text-muted mb-12 text-center max-w-3xl mx-auto">
-          Define your investment parameters and select your assets. Our quantum-inspired engine will find the optimal allocation to maximize your Sharpe Ratio.
+          Define your investment parameters and select your assets. Our engine will compare a quantum-inspired algorithm with a classical approach to find optimal allocations.
         </p>
       </motion.div>
 
@@ -279,39 +311,20 @@ const PortfolioPage = () => {
               {results && (
                 <motion.div className="space-y-8" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }}>
                   <div className="quantum-card p-6">
-                    <h2 className="text-2xl font-bold mb-6 text-quantum-accent text-center">Step 3: Optimal Allocation</h2>
-                    <div className="grid md:grid-cols-2 gap-8 items-center">
-                      <div className="h-[300px] w-full"><PieChart data={results.optimal_weights} /></div>
-                      <div className="space-y-4">
-                          <div className="flex justify-between items-center bg-quantum-secondary/20 p-3 rounded-lg">
-                              <span className="font-semibold text-quantum-text-muted">Sharpe Ratio</span>
-                              <span className="font-bold text-2xl text-quantum-accent">{results.performance.sharpe_ratio.toFixed(4)}</span>
-                          </div>
-                           <div className="flex justify-between items-center bg-quantum-secondary/20 p-3 rounded-lg">
-                              <span className="font-semibold text-quantum-text-muted">Expected Annual Return</span>
-                              <span className="font-bold text-lg text-green-400">{(results.performance.expected_annual_return * 100).toFixed(2)}%</span>
-                          </div>
-                           <div className="flex justify-between items-center bg-quantum-secondary/20 p-3 rounded-lg">
-                              <span className="font-semibold text-quantum-text-muted">Annual Volatility</span>
-                              <span className="font-bold text-lg text-yellow-400">{(results.performance.annual_volatility * 100).toFixed(2)}%</span>
-                          </div>
-                           <div className="flex justify-between items-center bg-quantum-secondary/20 p-3 rounded-lg">
-                              <span className="font-semibold text-quantum-text-muted">Daily VaR (95%)</span>
-                              <span className="font-bold text-lg text-red-400">{(results.performance.value_at_risk_95 * 100).toFixed(2)}%</span>
-                          </div>
-                           <div className="flex justify-between items-center bg-green-500/10 border border-green-500/30 p-3 rounded-lg">
-                              <span className="font-semibold text-quantum-text-muted">Projected Annual Profit</span>
-                              <span className="font-bold text-lg text-green-400">
-                                  ${(investmentAmount * results.performance.expected_annual_return).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                              </span>
-                          </div>
-                           <div className="flex justify-between items-center bg-red-500/10 border border-red-500/30 p-3 rounded-lg">
-                              <span className="font-semibold text-quantum-text-muted">Potential Daily Risk</span>
-                              <span className="font-bold text-lg text-red-400">
-                                  ${(investmentAmount * results.performance.value_at_risk_95).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                              </span>
-                          </div>
-                      </div>
+                    <h2 className="text-2xl font-bold mb-6 text-quantum-accent text-center">Step 3: Optimization Comparison</h2>
+                    <div className="grid md:grid-cols-2 gap-8 items-start">
+                        <PerformanceCard 
+                            title="Quantum (QAOA)" 
+                            results={results.quantum} 
+                            investmentAmount={investmentAmount}
+                            icon={<Atom size={28} className="text-quantum-accent" />}
+                        />
+                        <PerformanceCard 
+                            title="Classical (Mean-Variance)" 
+                            results={results.classical} 
+                            investmentAmount={investmentAmount}
+                            icon={<Scale size={28} className="text-quantum-accent" />}
+                        />
                     </div>
                   </div>
                   

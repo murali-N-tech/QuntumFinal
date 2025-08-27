@@ -1,15 +1,32 @@
 import React from 'react';
 import { PieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
-// A new, vibrant, and clear color palette for the chart
+// Extended vibrant, user-friendly palette
 const COLORS = [
-  '#18E6D9', // quantum-glow
-  '#43CEA2', // quantum-accent
+  '#18E6D9', // quantum-glow teal
+  '#43CEA2', // quantum-accent green
   '#00BFFF', // Deep Sky Blue
   '#8A2BE2', // Blue Violet
   '#FF69B4', // Hot Pink
   '#FFD700', // Gold
   '#FF4500', // Orange Red
+  '#32CD32', // Lime Green
+  '#FF8C00', // Dark Orange
+  '#20B2AA', // Light Sea Green
+  '#BA55D3', // Medium Orchid
+  '#FF6347', // Tomato
+  '#1E90FF', // Dodger Blue
+  '#7FFF00', // Chartreuse
+  '#FF1493', // Deep Pink
+  '#ADFF2F', // Green Yellow
+  '#FFB6C1', // Light Pink
+  '#40E0D0', // Turquoise
+  '#DC143C', // Crimson
+  '#4169E1', // Royal Blue
+  '#00FA9A', // Medium Spring Green
+  '#C71585', // Medium Violet Red
+  '#F4A460', // Sandy Brown
+  '#708090', // Slate Gray
 ];
 
 const CustomTooltip = ({ active, payload }) => {
