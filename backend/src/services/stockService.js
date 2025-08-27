@@ -1,6 +1,6 @@
 const axios = require("axios");
 
-const API_KEY = "PTn1XDIPjwLUoNwcn9fvhsYmfxgagL0J"; // Your API key
+const API_KEY = "jUb00jMjeMfl2t5VVaDN8tfflhiYvFlC"||"u5QX5qS4bnO2kEO2i7uOhYfxGu4v9Qbu"; // Replace with your API key
 const BASE_URL = "https://financialmodelingprep.com/api/v3";
 
 // Helper: chunk array into smaller batches
@@ -12,8 +12,6 @@ const chunkArray = (arr, size) =>
 
 /**
  * Fetches real-time quotes for multiple stock symbols (batched).
- * @param {string[]} symbols - Array of stock tickers.
- * @returns {Array} A list of formatted stock quote objects.
  */
 const getMultipleStockQuotes = async (symbols) => {
   if (!API_KEY) throw new Error("Financial Modeling Prep API key is missing.");
@@ -44,25 +42,21 @@ const getMultipleStockQuotes = async (symbols) => {
       "FMP Service Error:",
       error.response ? error.response.data : error.message
     );
-    throw new Error(
-      "Failed to fetch stock quotes from Financial Modeling Prep."
-    );
+    throw new Error("Failed to fetch stock quotes from Financial Modeling Prep.");
   }
 };
 
 /**
  * Fetches a list of the top 100–250 US stocks and retrieves their quote data.
- * @returns {Array} A list of stock objects.
  */
 const getTopStocksWithQuotes = async () => {
   if (!API_KEY) throw new Error("Financial Modeling Prep API key is missing.");
 
   try {
-    // ✅ Use stock-screener (valid endpoint)
     const response = await axios.get(`${BASE_URL}/stock-screener`, {
       params: {
-        limit: 100, // you can increase to 250
-        exchange: "NYSE,NASDAQ,AMEX", // supported US exchanges
+        limit: 100, // can increase to 250
+        exchange: "NYSE,NASDAQ,AMEX",
         apikey: API_KEY,
       },
     });
@@ -78,7 +72,47 @@ const getTopStocksWithQuotes = async () => {
   }
 };
 
+/**
+ * Searches for assets by ticker or name.
+ */
+const searchAssets = async (query) => {
+  if (!API_KEY) throw new Error("Financial Modeling Prep API key is missing.");
+  try {
+    const response = await axios.get(`${BASE_URL}/search`, {
+      params: {
+        query: query,
+        limit: 10,
+        exchange: "NASDAQ,NYSE,AMEX",
+        apikey: API_KEY,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error("FMP Service Error (Search):", error.message);
+    throw new Error("Failed to search for assets.");
+  }
+};
+/**
+ * Fetches the detailed profile for a single company.
+ * @param {string} symbol - The stock ticker.
+ * @returns {object} The company profile data.
+ */
+const getCompanyProfile = async (symbol) => {
+  if (!API_KEY) throw new Error("Financial Modeling Prep API key is missing.");
+  try {
+    const response = await axios.get(`${BASE_URL}/profile/${symbol}`, {
+      params: { apikey: API_KEY },
+    });
+    return response.data[0]; // The API returns an array with one object
+  } catch (error) {
+    console.error("FMP Service Error (Profile):", error.message);
+    throw new Error("Failed to fetch company profile.");
+  }
+};
+
 module.exports = {
   getMultipleStockQuotes,
   getTopStocksWithQuotes,
+  searchAssets,
+  getCompanyProfile
 };

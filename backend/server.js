@@ -22,6 +22,7 @@ app.get('/', (req, res) => res.send('Quantum Portfolio Optimizer API is running.
 app.use('/api/auth', require('./src/routes/authRoutes'));
 app.use('/api/portfolios', require('./src/routes/portfolioRoutes'));
 app.use('/api/screener', require('./src/routes/screenerRoutes'));
+app.use('/api/translate', require('./src/routes/translationRoutes'));
 
 // Custom Error Handler
 app.use(errorHandler);

@@ -7,3 +7,13 @@ body {
   background-color: #0D1117;
   color: #f0f2f5; /* Change text color for better contrast on a dark background */
 }
+@layer utilities {
+  @keyframes flicker {
+    0%, 100% { opacity: 1; }
+    20%, 60% { opacity: 0.3; }
+    40%, 80% { opacity: 0.8; }
+  }
+  .animate-flicker {
+    animation: flicker 0.3s linear;
+  }
+}

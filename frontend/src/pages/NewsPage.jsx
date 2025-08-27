@@ -1,5 +1,39 @@
 import React, { useState, useEffect } from 'react';
 import api from '../services/api';
+import useAutoTranslate from '../hooks/useAutoTranslate'; // Import the custom translation hook
+
+/**
+ * A sub-component that handles the translation for a single news article.
+ * This improves performance by isolating the translation logic.
+ */
+const TranslatedArticle = ({ article }) => {
+  // Use the hook to translate the dynamic headline and summary
+  const { translatedText: translatedHeadline } = useAutoTranslate(article.headline);
+  const { translatedText: translatedSummary } = useAutoTranslate(article.summary);
+
+  return (
+    <a
+      key={article.id}
+      href={article.url}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="block p-6 bg-white rounded-lg shadow-xl border-2 border-black 
+                 hover:shadow-2xl hover:scale-105 transition-all duration-300 transform"
+    >
+      <div className="text-black">
+        <p className="text-sm font-semibold text-gray-500">
+          {article.source}
+        </p>
+        <h2 className="text-lg font-bold my-1">{translatedHeadline}</h2>
+        <p className="text-sm text-gray-700">{translatedSummary}</p>
+        <p className="text-xs text-gray-400 mt-2">
+          {new Date(article.datetime * 1000).toLocaleString()}
+        </p>
+      </div>
+    </a>
+  );
+};
+
 
 const NewsPage = () => {
   const [news, setNews] = useState([]);
@@ -42,25 +76,8 @@ const NewsPage = () => {
 
       <div className="space-y-6 max-w-4xl mx-auto">
         {news.map((article) => (
-          <a
-            key={article.id}
-            href={article.url}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="block p-6 bg-white rounded-lg shadow-xl border-2 border-black 
-                       hover:shadow-2xl hover:scale-105 transition-all duration-300 transform"
-          >
-            <div className="text-black">
-              <p className="text-sm font-semibold text-gray-500">
-                {article.source}
-              </p>
-              <h2 className="text-lg font-bold my-1">{article.headline}</h2>
-              <p className="text-sm text-gray-700">{article.summary}</p>
-              <p className="text-xs text-gray-400 mt-2">
-                {new Date(article.datetime * 1000).toLocaleString()}
-              </p>
-            </div>
-          </a>
+          // Use the new TranslatedArticle component for each item
+          <TranslatedArticle key={article.id} article={article} />
         ))}
       </div>
     </div>

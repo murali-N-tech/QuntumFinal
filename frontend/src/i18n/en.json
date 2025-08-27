@@ -1,23 +1,97 @@
 {
   "nav": {
+    "home": "Home",
     "dashboard": "Dashboard",
     "stocks": "Stocks",
     "crypto": "Crypto",
+    "forex": "Forex",
+    "news": "News",
     "optimizer": "Optimizer",
     "login": "Login",
     "logout": "Logout",
-    "register": "Register",
-    "home": "Home"
+    "register": "Register"
   },
   "hero": {
-    "title": "Unleash Your Financial Potential with Quantum-Powered AI",
-    "subtitle": "Harness the computational power of quantum mechanics to build an optimal portfolio with higher returns and reduced risk.",
-    "ctaButton": "Explore Solutions"
-  },
-  "home": {
-    "title": "Quantum-Powered Portfolio Optimization",
+    "title": "QuantumFolio",
     "subtitle": "Leverage the power of quantum computing to maximize your returns and minimize your risk.",
     "ctaButton": "Optimize My Portfolio"
+  },
+  "home": {
+    "title": "Welcome to the Future of Investing",
+    "subtitle": "Discover data-driven insights and optimize your portfolio with cutting-edge technology.",
+    "ctaButton": "Get Started"
+  },
+  "dashboard": {
+    "title": "Market Dashboard",
+    "explore": "Explore {{section}} data and tools."
+  },
+  "stocks": {
+    "title": "Popular Stocks",
+    "subtitle": "Real-time quotes powered by our integrated APIs.",
+    "table": {
+      "symbol": "Symbol",
+      "name": "Company Name",
+      "price": "Price",
+      "change": "Change (%)",
+      "volume": "Volume",
+      "marketCap": "Market Cap",
+      "highLow": "High / Low"
+    },
+    "searchPlaceholder": "Search for a stock ticker..."
+  },
+  "crypto": {
+    "title": "Top 100 Cryptocurrencies",
+    "subtitle": "Ranked by market capitalization.",
+    "searchPlaceholder": "Search for a cryptocurrency..."
+  },
+  "forex": {
+    "title": "Forex Market",
+    "subtitle": "Live data for major currency pairs.",
+    "table": {
+      "symbol": "Symbol",
+      "name": "Name",
+      "active": "Active",
+      "locale": "Locale",
+      "market": "Market",
+      "baseQuote": "Base / Quote"
+    }
+  },
+  "news": {
+    "title": "Market News",
+    "subtitle": "Top general news from the financial world."
+  },
+  "portfolio": {
+    "title": "Quantum Portfolio Optimizer",
+    "subtitle": "Harness the power of quantum computing for smarter investments.",
+    "selectAssets": "1. Select Your Assets",
+    "addCustom": "Add Custom Asset",
+    "selectedAssets": "Selected Assets",
+    "optimizeButton": "Optimize Portfolio",
+    "loadingButton": "Running Quantum Simulation & Fetching History...",
+    "resultsTitle": "Optimal Portfolio Allocation",
+    "weights": "Optimal Weights",
+    "metrics": "Performance Metrics",
+    "sharpe": "Sharpe Ratio",
+    "return": "Expected Return",
+    "volatility": "Volatility",
+    "historyTitle": "Historical Performance Comparison (1Y)"
+  },
+  "assetDetail": {
+    "loading": "Loading asset details for {{symbol}}...",
+    "liveData": "Live Market Data",
+    "priceHistory": "Price History (1Y)"
+  },
+  "about": {
+    "title": "Meet Our StackZy Partners",
+    "subtitle": "Our diverse team, based in Vijayawada, Andhra Pradesh, India, brings together expertise in quantum computing, finance, and software development to power the Portfolio Optimizer."
+  },
+  "support": {
+    "title": "Support Center",
+    "subtitle": "Have questions? We're here to help you navigate the quantum realm of finance."
+  },
+  "terms": {
+    "title": "Our Quantum Principles",
+    "subtitle": "Terms of Service & Privacy Policy for the Quantum Portfolio Optimizer"
   },
   "auth": {
     "loginTitle": "Login to Your Account",
@@ -31,5 +105,16 @@
     "hasAccount": "Already have an account?",
     "registerLink": "Register",
     "loginLink": "Login"
+  },
+  "notFound": {
+    "title": "Page Not Found",
+    "subtitle": "The page you are looking for does not exist.",
+    "goHome": "Go to Homepage"
+  },
+  "common": {
+    "loading": "Loading...",
+    "authRequired": "Authentication Required",
+    "loginPrompt": "Please log in to continue.",
+    "noData": "No data available."
   }
 }

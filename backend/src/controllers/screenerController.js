@@ -1,6 +1,8 @@
 const {
   getMultipleStockQuotes,
   getTopStocksWithQuotes,
+  searchAssets,
+  getCompanyProfile
 } = require("../services/stockService.js");
 const { getTopCryptos } = require("../services/cryptoService.js");
 const { getForexPairs } = require("../services/forexService.js");
@@ -14,7 +16,6 @@ const fetchMultipleStockQuotes = async (req, res, next) => {
       const quotes = await getMultipleStockQuotes(symbols.split(","));
       return res.json(quotes);
     } else {
-      // ✅ Correct function
       const topStocks = await getTopStocksWithQuotes();
       return res.json(topStocks);
     }
@@ -53,9 +54,34 @@ const fetchMarketNews = async (req, res, next) => {
   }
 };
 
+// === Asset Search Controller ===
+const handleAssetSearch = async (req, res, next) => {
+  try {
+    const query = req.query.q;
+    if (!query) {
+      return res.status(400).json({ message: "Query parameter (q) is required." });
+    }
+    const results = await searchAssets(query);
+    res.json(results);
+  } catch (error) {
+    next(error);
+  }
+};
+const fetchCompanyProfile = async (req, res, next) => {
+    try {
+        const { symbol } = req.params;
+        const profile = await getCompanyProfile(symbol);
+        res.json(profile);
+    } catch (error) {
+        next(error);
+    }
+};
+
 module.exports = {
   fetchMultipleStockQuotes,
   fetchTopCryptos,
   fetchForexPairs,
   fetchMarketNews,
+  handleAssetSearch,
+  fetchCompanyProfile
 };

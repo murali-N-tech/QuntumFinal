@@ -1,22 +1,30 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
+
 const {
   fetchMultipleStockQuotes,
   fetchTopCryptos,
   fetchForexPairs,
   fetchMarketNews,
-} = require('../controllers/screenerController.js');
+  handleAssetSearch,
+  fetchCompanyProfile
+} = require("../controllers/screenerController.js");
 
-// Stock Route (now using a single endpoint for multiple quotes)
-router.get('/stocks/quotes', fetchMultipleStockQuotes);
+// === Stock Route (multiple quotes or top stocks) ===
+router.get("/stocks/quotes", fetchMultipleStockQuotes);
 
-// Crypto Route
-router.get('/crypto/top', fetchTopCryptos);
+// === Crypto Route ===
+router.get("/crypto/top", fetchTopCryptos);
 
-// Forex Route
-router.get('/forex/pairs', fetchForexPairs);
+// === Forex Route ===
+router.get("/forex/pairs", fetchForexPairs);
 
-// Trading Route
-router.get('/trading/news', fetchMarketNews);
+// === Trading Route ===
+router.get("/trading/news", fetchMarketNews);
+
+// === Asset Search Route (✅ corrected endpoint) ===
+router.get("/assets/search", handleAssetSearch);
+
+router.get('/screener/profile/:symbol', fetchCompanyProfile);
 
 module.exports = router;
